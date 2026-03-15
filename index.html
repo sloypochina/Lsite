@@ -29,30 +29,33 @@
             filter: blur(5px) brightness(0.4); 
         }
 
-        /* Мягкая виньетка */
+        /* Стилизованная виньетка */
         body::after {
             content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(15, 30, 80, 0.4) 80%, rgba(0,0,0,0.9) 100%);
+            box-shadow: inset 0 0 100px rgba(59, 130, 246, 0.2);
             pointer-events: none; 
             z-index: -1;
         }
 
-        /* Эффект зернистости (Film Grain) */
-        .grain-overlay {
-            position: fixed; inset: 0; z-index: 20;
-            opacity: 0.04; /* Очень тонкая настройка прозрачности */
+        /* Тот самый эффект сканирующих линий */
+        body::before {
+            content: ""; position: fixed; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 4px, 3px 100%;
             pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 20;
         }
 
-        /* Кнопки */
+        /* Общие стили кнопок */
         .glass-btn {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             text-decoration: none;
             color: white;
@@ -62,20 +65,20 @@
         }
         
         .glass-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
         }
 
-        /* Компактная кнопка PRICE (сокращена в ширину и высоту) */
+        /* Кнопка PRICE: ширина -30% (225px) и меньше высота */
         .btn-price-main {
             width: 100%;
-            max-width: 220px; /* Сокращено на 30% */
-            padding: 14px !important;
-            font-size: 1rem;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            margin-bottom: 12px;
+            max-width: 225px; 
+            padding: 12px 15px !important; 
+            font-size: 1.1rem;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            margin-bottom: 15px;
         }
 
         /* Окно Прайса */
@@ -89,27 +92,27 @@
             box-shadow: 0 0 50px rgba(0,0,0,1);
             z-index: 100;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             display: none;
         }
         .win-header {
             background: #3b82f6;
             color: white;
-            padding: 8px 12px;
+            padding: 10px 15px;
             cursor: move;
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             font-family: monospace;
         }
         .price-img-container {
             width: 100%;
-            max-height: 75vh;
+            max-height: 80vh;
             overflow-y: auto;
         }
 
-        /* Заголовок */
+        /* Заголовок с анимацией */
         .killer-header span {
             display: inline-block;
             animation: snake-jump 4s infinite;
@@ -117,10 +120,11 @@
         }
         .killer-header span:hover {
             animation: none !important;
-            transform: scale(1.5) translateY(-8px);
-            text-shadow: 0 0 15px currentColor;
+            transform: scale(1.6) translateY(-10px);
+            text-shadow: 0 0 20px currentColor;
         }
         
+        /* Цвета при наведении */
         .hover-color-1 { color: #3b82f6 !important; }
         .hover-color-2 { color: #f472b6 !important; }
         .hover-color-3 { color: #a855f7 !important; }
@@ -129,7 +133,7 @@
 
         @keyframes snake-jump {
             0%, 100% { transform: translateY(0); }
-            5% { transform: translateY(-15px); }
+            5% { transform: translateY(-20px); }
             10% { transform: translateY(0); }
         }
 
@@ -137,8 +141,6 @@
     </style>
 </head>
 <body>
-
-    <div class="grain-overlay"></div>
 
     <video autoplay muted loop playsinline class="video-bg" id="bg-video">
         <source src="img/bg.mp4" type="video/mp4">
@@ -156,11 +158,11 @@
             PRICE LIST
         </button>
 
-        <div class="flex flex-wrap justify-center gap-3">
-            <a href="https://tiktok.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-[11px]">TIKTOK</a>
-            <a href="https://instagram.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-[11px]">INSTAGRAM</a>
-            <a href="https://boosty.to/" target="_blank" onclick="createTrail(event)" class="glass-btn text-[11px]">BOOSTY</a>
-            <a href="https://t.me/ТВОЙ_ТГ" target="_blank" onclick="createTrail(event)" class="glass-btn text-[11px]">TG ACC</a>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="https://tiktok.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">TIKTOK</a>
+            <a href="https://instagram.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">INSTAGRAM</a>
+            <a href="https://boosty.to/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">BOOSTY</a>
+            <a href="https://t.me/ТВОЙ_ТГ" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">TG ACC</a>
         </div>
 
     </div>

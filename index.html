@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
@@ -21,37 +22,34 @@
             height: 100vh;
         }
 
-        /* Видео-фон */
-        .video-bg {
+        /* Контейнер для Warp-эффекта */
+        #canvas-container {
             position: fixed; inset: 0; z-index: -3;
             width: 100vw; height: 100vh;
-            object-fit: cover;
-            filter: blur(5px) brightness(0.4); 
         }
 
-        /* Стилизованная виньетка */
+        /* Стилизованная виньетка поверх фона */
         body::after {
             content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(15, 30, 80, 0.4) 80%, rgba(0,0,0,0.9) 100%);
-            box-shadow: inset 0 0 100px rgba(59, 130, 246, 0.2);
+            background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.9) 100%);
+            box-shadow: inset 0 0 150px rgba(0,0,0,1);
             pointer-events: none; 
             z-index: -1;
         }
 
-        /* Тот самый эффект сканирующих линий */
+        /* Эффект сканирующих линий */
         body::before {
             content: ""; position: fixed; inset: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 4px, 3px 100%;
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none;
             z-index: 20;
         }
 
-        /* Общие стили кнопок */
         .glass-btn {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 12px 24px;
             font-weight: bold;
@@ -71,12 +69,12 @@
             border-color: rgba(59, 130, 246, 0.5);
         }
 
-        /* Кнопка PRICE: ширина -30% (225px) и меньше высота */
+        /* Итоговая кнопка PRICE по твоим размерам */
         .btn-price-main {
             width: 100%;
-            max-width: 225px; /* Уменьшили ширину согласно твоей просьбе */
-            padding: 12px 15px !important; /* Меньше высота */
-            font-size: 1.1rem; /* Чуть меньше шрифт, чтобы всё влезло */
+            max-width: 225px; /* Сокращено на 30% */
+            padding: 10px 15px !important; /* Меньше высота */
+            font-size: 1rem;
             border: 2px solid rgba(59, 130, 246, 0.4);
             margin-bottom: 15px;
         }
@@ -84,47 +82,29 @@
         /* Окно Прайса */
         .price-win {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #0a0a0a;
             border: 2px solid #3b82f6;
             box-shadow: 0 0 50px rgba(0,0,0,1);
             z-index: 100;
-            width: 90%;
-            max-width: 550px;
+            width: 90%; max-width: 550px;
             display: none;
         }
         .win-header {
-            background: #3b82f6;
-            color: white;
-            padding: 10px 15px;
-            cursor: move;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: bold;
-            font-family: monospace;
+            background: #3b82f6; color: white;
+            padding: 10px 15px; cursor: move;
+            display: flex; justify-content: space-between;
+            font-size: 12px; font-weight: bold; font-family: monospace;
         }
-        .price-img-container {
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
+        .price-img-container { width: 100%; max-height: 80vh; overflow-y: auto; }
 
-        /* Заголовок с анимацией */
         .killer-header span {
-            display: inline-block;
-            animation: snake-jump 4s infinite;
-            transition: 0.3s ease-out;
+            display: inline-block; animation: snake-jump 4s infinite; transition: 0.3s ease-out;
         }
         .killer-header span:hover {
-            animation: none !important;
-            transform: scale(1.6) translateY(-10px);
-            text-shadow: 0 0 20px currentColor;
+            animation: none !important; transform: scale(1.6) translateY(-10px); text-shadow: 0 0 20px currentColor;
         }
         
-        /* Цвета при наведении */
         .hover-color-1 { color: #3b82f6 !important; }
         .hover-color-2 { color: #f472b6 !important; }
         .hover-color-3 { color: #a855f7 !important; }
@@ -145,24 +125,26 @@
     <video autoplay muted loop playsinline class="video-bg" id="bg-video">
         <source src="img/bg.mp4" type="video/mp4">
     </video>
+
+    <div id="canvas-container"></div>
     
     <header class="absolute top-10 left-10 md:left-20 z-10">
         <h1 class="killer-header text-5xl md:text-6xl uppercase tracking-tighter font-black whitespace-nowrap text-white">
-            <span style="animation-delay: 0.1s;">&lt;</span><span style="animation-delay: 0.2s;">D</span><span style="animation-delay: 0.3s;">A</span><span style="animation-delay: 0.4s;">N</span><span style="animation-delay: 0.5s;">S</span><span style="animation-delay: 0.6s;">A</span><span style="animation-delay: 0.7s;">N</span><span style="animation-delay: 0.8s;">E</span><span style="animation-delay: 0.9s;">&gt;</span>
+            <span>&lt;</span><span>D</span><span>A</span><span>N</span><span>S</span><span>A</span><span>N</span><span>E</span><span>&gt;</span>
         </h1>
     </header>
 
     <div class="absolute top-1/2 left-0 w-full transform -translate-y-1/2 flex flex-col items-center gap-4 px-4 z-10">
         
         <button onclick="openPrice(); createTrail(event)" class="glass-btn btn-price-main">
-            PRICE_LIST.PNG
+            PRICE LIST
         </button>
 
         <div class="flex flex-wrap justify-center gap-4">
             <a href="https://tiktok.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">TIKTOK</a>
             <a href="https://instagram.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">INSTAGRAM</a>
             <a href="https://boosty.to/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">BOOSTY</a>
-            <a href="https://t.me/ТВОЙ_ТГ" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">TG_ACC.EXE</a>
+            <a href="https://t.me/ТВОЙ_ТГ" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">TG ACC</a>
         </div>
 
     </div>
@@ -178,12 +160,60 @@
     </div>
 
     <script>
-        window.onload = () => { document.getElementById('bg-video').play(); };
+        // --- Логика Warp-эффекта (адаптировано под твой стиль) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        $( function() {
-            $( "#price-window" ).draggable({ handle: ".win-header" });
+        const geometry = new THREE.PlaneGeometry(20, 10, 128, 128);
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                uniform float time;
+                void main() {
+                    vUv = uv;
+                    vec3 pos = position;
+                    pos.z += sin(pos.x * 1.5 + time) * 0.5;
+                    pos.z += cos(pos.y * 1.0 + time * 0.8) * 0.3;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vUv;
+                uniform float time;
+                void main() {
+                    vec3 color = mix(vec3(0.02, 0.05, 0.15), vec3(0.0, 0.0, 0.0), vUv.y);
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            wireframe: true,
+            transparent: true
         });
 
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        camera.position.z = 5;
+
+        function animate(t) {
+            requestAnimationFrame(animate);
+            material.uniforms.time.value = t * 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Твоя стандартная логика ---
+        $(function() { $("#price-window").draggable({ handle: ".win-header" }); });
         function openPrice() { $('#price-window').fadeIn(200); }
         function closePrice() { $('#price-window').fadeOut(200); }
         
@@ -196,8 +226,7 @@
 
         function createTrail(e) {
             const el = document.createElement('div');
-            el.className = 'trail-star';
-            el.innerHTML = '✦';
+            el.className = 'trail-star'; el.innerHTML = '✦';
             el.style.left = e.pageX + 'px'; el.style.top = e.pageY + 'px';
             document.body.appendChild(el);
             $(el).animate({ opacity: 0, top: '-=50px', fontSize: '30px' }, 800, () => el.remove());

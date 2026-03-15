@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- Подключаем легкую библиотеку для плавного зума и тач-жестов -->
+    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.0/dist/panzoom.min.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
@@ -27,6 +29,8 @@
             width: 100vw; height: 100vh;
             object-fit: cover;
             filter: blur(5px) brightness(0.4); 
+            /* Для плавности на мобильных устройствах */
+            transform: translateZ(0);
         }
 
         /* Стилизованная виньетка */
@@ -151,7 +155,7 @@
 
 
         /* ========================================= */
-        /* TRANSPARENT GLOWING EDGES CARD            */
+        /* TRANSPARENT GLOWING EDGES CARD (PRICE)    */
         /* ========================================= */
 
         .price-win-wrapper {
@@ -161,7 +165,7 @@
 
         .glowing-card {
             --glow-sens: 30;
-            --blend: screen; /* Меняем режим смешивания для стекла */
+            --blend: screen;
             --glow-blend: plus-lighter;
             --glow-color: 40deg 80% 80%;
             --glow-boost: 0%;
@@ -171,22 +175,19 @@
             --pointer-°: 45deg;
             
             position: relative;
-            width: 90vw;
-            max-width: 800px;
+            width: 95vw; 
+            max-width: 850px;
             border-radius: 1.768em;
             isolation: isolate;
             
-            /* ПРОЗРАЧНОЕ МАТОВОЕ СТЕКЛО (Glassmorphism) */
             background: rgba(15, 15, 25, 0.25);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             
-            /* Мягкие тени для объема */
             box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
         }
         
-        /* Скрываем свечение, если мышка ушла или окно неактивно */
         .glowing-card:not(:hover):not(.animating) .card-glow,
         .glowing-card:not(:hover):not(.animating) .card-border-wrapper,
         .glowing-card:not(:hover):not(.animating) .card-inner-mesh {
@@ -194,7 +195,6 @@
             transition: opacity 0.75s ease-in-out;
         }
 
-        /* 1. ВНЕШНЕЕ СВЕЧЕНИЕ (За пределами окна) */
         .card-glow {
             --outset: var(--pads);
             position: absolute; inset: calc(var(--outset) * -1); border-radius: inherit; z-index: -1;
@@ -203,6 +203,7 @@
             opacity: calc((var(--pointer-d) - var(--glow-sens)) / (100 - var(--glow-sens)));
             mix-blend-mode: var(--glow-blend);
         }
+        
         .card-glow::before {
             content: ""; position: absolute; inset: var(--outset); border-radius: inherit;
             box-shadow: 
@@ -221,7 +222,6 @@
                 0 0 50px 2px hsl( var(--glow-color) / calc(var(--glow-boost) + 10%));
         }
 
-        /* 2. РАМКА ОРГАНИЧИВАЮЩАЯ СВЕЧЕНИЕ (Коническая маска по курсору) */
         .card-border-wrapper {
             position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
             mask-image: conic-gradient(from var(--pointer-°) at center, black 25%, transparent 40%, transparent 60%, black 75%);
@@ -229,10 +229,9 @@
             transition: opacity 0.25s ease-out;
         }
 
-        /* САМА ЦВЕТНАЯ РАМКА (Рисуется только по краям) */
         .card-border-glow {
             position: absolute; inset: 0; border-radius: inherit;
-            padding: 2px; /* Толщина рамки */
+            padding: 2px;
             background:
                 radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0px, transparent 50%),
                 radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0px, transparent 50%),
@@ -242,13 +241,11 @@
                 radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0px, transparent 50%),
                 radial-gradient(at 51% 4%, hsla(12,100%,72%,1) 0px, transparent 50%),
                 linear-gradient(#c299ff 0 100%);
-            /* Вырезаем центр, чтобы окно оставалось прозрачным */
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
         }
 
-        /* 3. ВНУТРЕННИЕ ПЯТНА СВЕЧЕНИЯ (Которые бегают под стеклом) */
         .card-inner-mesh {
             position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
             background:
@@ -274,41 +271,43 @@
             transition: opacity 0.25s ease-out;
         }
 
-        /* Контент внутри прозрачного окна */
-        .glowing-card-inner {
-            display: flex; flex-direction: column; z-index: 2; position: relative;
-        }
+        .glowing-card-inner { display: flex; flex-direction: column; z-index: 2; position: relative; }
 
         .glowing-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-family: monospace; font-weight: bold; font-size: 14px;
-            color: rgba(255, 255, 255, 0.9); cursor: move; /* для draggable */
+            color: rgba(255, 255, 255, 0.9); cursor: move; 
         }
         
         .glowing-header button {
             background: none; border: none; color: #f87171; cursor: pointer; 
             font-family: inherit; font-size: inherit; transition: all 0.2s;
         }
+        
         .glowing-header button:hover {
             color: #ef4444; text-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
         }
 
-        .glowing-content {
-            padding: 20px; overflow: hidden; 
-        }
+        .glowing-content { padding: 15px; position: relative; }
 
         .price-img-container { 
-            width: 100%; max-height: 70vh; overflow-y: auto; 
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Добавил тень самой картинке */
+            width: 100%; height: 70vh; overflow: hidden; 
+            border-radius: 12px; background: rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #price-img {
+            max-width: 100%; max-height: 100%;
+            object-fit: contain;
+            cursor: grab; 
+            transition: transform 0.1s; 
         }
         
-        /* Скроллбар для картинки внутри окна */
-        .price-img-container::-webkit-scrollbar { width: 8px; }
-        .price-img-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
-        .price-img-container::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.6); border-radius: 4px; }
-        .price-img-container::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.9); }
+        #price-img:active {
+            cursor: grabbing; 
+        }
 
     </style>
 </head>
@@ -332,8 +331,9 @@
         </filter>
     </svg>
 
-    <!-- Твой видео-фон -->
-    <video autoplay muted loop playsinline class="video-bg" id="bg-video">
+    <!-- Твой видео-фон (Исправлено для iPhone/iOS) -->
+    <!-- Добавлены playsinline и muted (обязательно для autoplay на iOS) -->
+    <video autoplay loop muted playsinline webkit-playsinline class="video-bg" id="bg-video">
         <source src="img/bg.mp4" type="video/mp4">
     </video>
     
@@ -346,7 +346,6 @@
     </header>
 
     <div class="absolute top-1/2 left-0 w-full transform -translate-y-1/2 flex flex-col items-center gap-4 px-4 z-10">
-        
         <!-- Кнопка PRICE -->
         <button onclick="openPrice(); createTrail(event)" class="glass-btn btn-price-main">
             <div class="liquidGlass-effect"></div>
@@ -355,51 +354,34 @@
             <div class="liquidGlass-text">Price List</div>
         </button>
 
-        <!-- Остальные ссылки -->
         <div class="flex flex-wrap justify-center gap-4">
             <a href="https://www.tiktok.com/@dansaneadorer?_r=1&_t=ZT-94iYEDE2BTh" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
-                <div class="liquidGlass-effect"></div>
-                <div class="liquidGlass-tint"></div>
-                <div class="liquidGlass-shine"></div>
+                <div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">TIKTOK</div>
             </a>
             <a href="https://www.instagram.com/dansaneadorer?igsh=cGF6MnpiYzBuZDU=" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
-                <div class="liquidGlass-effect"></div>
-                <div class="liquidGlass-tint"></div>
-                <div class="liquidGlass-shine"></div>
+                <div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">INSTAGRAM</div>
             </a>
             <a href="https://boosty.to/dansaneadorer" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
-                <div class="liquidGlass-effect"></div>
-                <div class="liquidGlass-tint"></div>
-                <div class="liquidGlass-shine"></div>
+                <div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">BOOSTY</div>
             </a>
             <a href="https://t.me/ТВОЙ_ТГ" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
-                <div class="liquidGlass-effect"></div>
-                <div class="liquidGlass-tint"></div>
-                <div class="liquidGlass-shine"></div>
+                <div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">TG ACC</div>
             </a>
         </div>
     </div>
 
-    <!-- Окно прайса (ПРОЗРАЧНОЕ + СВЕТЯЩИЕСЯ КРАЯ) -->
+    <!-- Окно прайса -->
     <div id="price-window-wrapper" class="price-win-wrapper">
         <div class="glowing-card" id="glowing-card">
             
-            <!-- Внешнее свечение вокруг рамки -->
             <span class="card-glow"></span>
-            
-            <!-- Сама бегающая разноцветная рамка -->
-            <div class="card-border-wrapper">
-                <div class="card-border-glow"></div>
-            </div>
-            
-            <!-- Пятна, которые бегают ВНУТРИ прозрачного окна под картинкой -->
+            <div class="card-border-wrapper"><div class="card-border-glow"></div></div>
             <div class="card-inner-mesh"></div>
             
-            <!-- Контент (Текст и Картинка) -->
             <div class="glowing-card-inner">
                 <header class="glowing-header">
                     <span>Price List</span>
@@ -407,9 +389,24 @@
                 </header>
                 
                 <div class="glowing-content">
-                    <div class="price-img-container">
-                        <img src="img/input_file_0.png" alt="Price List" class="w-full h-auto block rounded-lg">
+
+                    <!-- Плашка подсказки для зума -->
+                    <div id="zoom-hint" class="absolute top-6 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-black/60 border border-white/10 rounded-full text-white/90 text-xs font-mono backdrop-blur-md pointer-events-none transition-opacity duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                        </svg>
+                        <span>SCROLL TO ZOOM</span>
                     </div>
+
+                    <!-- Кнопка сброса зума (появляется только при отдалении) -->
+                    <button id="reset-zoom" onclick="resetImgZoom()" class="absolute bottom-6 right-6 z-20 px-3 py-1.5 bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold font-mono rounded shadow-[0_0_15px_rgba(239,68,68,0.5)] backdrop-blur transition-all" style="display: none;">[ RESET ZOOM ]
+                    </button>
+
+                    <!-- Контейнер с картинкой -->
+                    <div class="price-img-container" id="img-container">
+                        <img src="img/input_file_0.png" alt="Price List" id="price-img" draggable="false">
+                    </div>
+
                 </div>
             </div>
             
@@ -417,22 +414,30 @@
     </div>
 
     <script>
-        window.onload = () => { document.getElementById('bg-video').play(); };
+        // Инициализация видео
+        window.onload = () => { 
+            const bgVideo = document.getElementById('bg-video');
+            bgVideo.play().catch(function(error) {
+                console.log("Autoplay was prevented by browser.");
+                // iOS может заблокировать даже с атрибутами, 
+                // если телефон в режиме жесткой экономии энергии.
+            });
+        };
 
         // Делаем окно перетаскиваемым за шапку
         $( function() {
             $( "#price-window-wrapper" ).draggable({ handle: ".glowing-header" });
         });
 
-        // Открытие / Закрытие окна
         function openPrice() { 
-            $('#price-window-wrapper').fadeIn(300, () => {
-                playCardAnimation(); // Запускаем красивый пробег свечения по краям при открытии
-            }); 
+            $('#price-window-wrapper').fadeIn(300, () => { playCardAnimation(); }); 
         }
-        function closePrice() { $('#price-window-wrapper').fadeOut(200); }
         
-        // Разноцветные буквы при наведении
+        function closePrice() { 
+            $('#price-window-wrapper').fadeOut(200); 
+            setTimeout(resetImgZoom, 300); // Сброс зума при закрытии
+        }
+        
         $('.killer-header span').on('mouseenter', function() {
             const randomColorNum = Math.floor(Math.random() * 5) + 1;
             $(this).addClass('hover-color-' + randomColorNum);
@@ -440,25 +445,25 @@
             $(this).removeClass('hover-color-1 hover-color-2 hover-color-3 hover-color-4 hover-color-5');
         });
 
-        // Искры за мышкой при клике
         function createTrail(e) {
             const el = document.createElement('div');
             el.className = 'trail-star';
             el.innerHTML = '✦';
-            el.style.left = e.pageX + 'px'; el.style.top = e.pageY + 'px';
+            el.style.left = e.pageX + 'px'; 
+            el.style.top = e.pageY + 'px';
             document.body.appendChild(el);
             $(el).animate({ opacity: 0, top: '-=50px', fontSize: '30px' }, 800, () => el.remove());
         }
 
         // ==========================================
-        // JS ДЛЯ GLOWING EDGES CARD
+        // JS ДЛЯ GLOWING EDGES CARD (Из CodePen)
         // ==========================================
         const $card = document.getElementById("glowing-card");
 
         const cardUpdate = (e) => {
             const position = pointerPositionRelativeToElement($card, e);
-            const[px, py] = position.pixels;
-            const[perx, pery] = position.percent;
+            const [px, py] = position.pixels;
+            const [perx, pery] = position.percent;
             const [dx, dy] = distanceFromCenter($card, px, py);
             const edge = closenessToEdge($card, px, py);
             const angle = angleFromPointerEvent($card, dx, dy);
@@ -467,21 +472,18 @@
             $card.style.setProperty('--pointer-y', `${round(pery)}%`);
             $card.style.setProperty('--pointer-°', `${round(angle)}deg`);
             $card.style.setProperty('--pointer-d', `${round(edge * 100)}`);
-            
             $card.classList.remove('animating');
         };
 
-        // Отслеживаем движение мыши по окну
         $card.addEventListener("pointermove", cardUpdate);
 
-        // Вспомогательные функции математики
         const centerOfElement = ($el) => {
             const { width, height } = $el.getBoundingClientRect();
-            return[width / 2, height / 2];
+            return [width / 2, height / 2];
         }
 
         const pointerPositionRelativeToElement = ($el, e) => {
-            const pos =[e.clientX, e.clientY];
+            const pos = [e.clientX, e.clientY];
             const { left, top, width, height } = $el.getBoundingClientRect();
             const x = pos[0] - left;
             const y = pos[1] - top;
@@ -491,7 +493,7 @@
         }
 
         const angleFromPointerEvent = ($el, dx, dy) => {
-            let angleRadians = 0;
+            let angleRadians = 0; 
             let angleDegrees = 0;
             if (dx !== 0 || dy !== 0) {
                 angleRadians = Math.atan2(dy, dx);
@@ -504,14 +506,14 @@
         }
 
         const distanceFromCenter = ($card, x, y) => {
-            const [cx, cy] = centerOfElement($card);
-            return[x - cx, y - cy];
+            const [cx, cy] = centerOfElement($card); 
+            return [x - cx, y - cy];
         }
 
         const closenessToEdge = ($card, x, y) => {
-            const[cx, cy] = centerOfElement($card);
+            const [cx, cy] = centerOfElement($card);
             const [dx, dy] = distanceFromCenter($card, x, y);
-            let k_x = Infinity;
+            let k_x = Infinity; 
             let k_y = Infinity;
             if (dx !== 0) k_x = cx / Math.abs(dx);
             if (dy !== 0) k_y = cy / Math.abs(dy);
@@ -521,73 +523,129 @@
         const round = (value, precision = 3) => parseFloat(value.toFixed(precision));
         const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
 
-        // Анимация при открытии окна (как в оригинале)
         const playCardAnimation = () => {
-            const angleStart = 110;
+            const angleStart = 110; 
             const angleEnd = 465;
-
+            
             $card.style.setProperty('--pointer-°', `${angleStart}deg`);
             $card.classList.add('animating');
 
-            animateNumber({
-                ease: easeOutCubic, duration: 500,
-                onUpdate: (v) => $card.style.setProperty('--pointer-d', v)
+            animateNumber({ 
+                ease: easeOutCubic, 
+                duration: 500, 
+                onUpdate: (v) => $card.style.setProperty('--pointer-d', v) 
             });
 
             animateNumber({
-                ease: easeInCubic, delay: 0, duration: 1500, endValue: 50,
-                onUpdate: (v) => {
-                    const d = (angleEnd - angleStart) * (v / 100) + angleStart;
-                    $card.style.setProperty('--pointer-°', `${d}deg`);
+                ease: easeInCubic, 
+                delay: 0, 
+                duration: 1500, 
+                endValue: 50,
+                onUpdate: (v) => { 
+                    $card.style.setProperty('--pointer-°', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`); 
                 }
             }); 
 
             animateNumber({
-                ease: easeOutCubic, delay: 1500, duration: 2250, startValue: 50, endValue: 100,
-                onUpdate: (v) => {
-                    const d = (angleEnd - angleStart) * (v / 100) + angleStart;
-                    $card.style.setProperty('--pointer-°', `${d}deg`);
+                ease: easeOutCubic, 
+                delay: 1500, 
+                duration: 2250, 
+                startValue: 50, 
+                endValue: 100,
+                onUpdate: (v) => { 
+                    $card.style.setProperty('--pointer-°', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`); 
                 }
             });
 
             animateNumber({
-                ease: easeInCubic, duration: 1500, delay: 2500, startValue: 100, endValue: 0,
+                ease: easeInCubic, 
+                duration: 1500, 
+                delay: 2500, 
+                startValue: 100, 
+                endValue: 0,
                 onUpdate: (v) => $card.style.setProperty('--pointer-d', v),
                 onEnd: () => $card.classList.remove('animating')
             });
         }
 
-        function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
-        function easeInCubic(x) { return x * x * x; } 
+        function easeOutCubic(x) { 
+            return 1 - Math.pow(1 - x, 3); 
+        }
+
+        function easeInCubic(x) { 
+            return x * x * x; 
+        } 
 
         function animateNumber(options) {
-            const {
-                startValue = 0, endValue = 100, duration = 1000, delay = 0,
-                onUpdate = () => {}, ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
-                onStart = () => {}, onEnd = () => {},
+            const { 
+                startValue = 0, 
+                endValue = 100, 
+                duration = 1000, 
+                delay = 0, 
+                onUpdate = () => {}, 
+                ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, 
+                onStart = () => {}, 
+                onEnd = () => {} 
             } = options;
-
+            
             const startTime = performance.now() + delay;
 
             function update() {
-                const currentTime = performance.now();
-                const elapsed = currentTime - startTime;
+                const elapsed = performance.now() - startTime;
                 const t = Math.min(elapsed / duration, 1);
-                const easedValue = startValue + (endValue - startValue) * ease(t);
-
-                onUpdate(easedValue);
-
+                onUpdate(startValue + (endValue - startValue) * ease(t));
+                
                 if (t < 1) {
-                    requestAnimationFrame(update);
-                } else if (t >= 1) {
+                    requestAnimationFrame(update); 
+                } else {
                     onEnd();
                 }
             }
             
-            setTimeout(() => {
-                onStart(); requestAnimationFrame(update);
+            setTimeout(() => { 
+                onStart(); 
+                requestAnimationFrame(update); 
             }, delay);
         }
+
+        // ==========================================
+        // ИНИЦИАЛИЗАЦИЯ ЗУМА (PANZOOM)
+        // ==========================================
+        const imgElem = document.getElementById('price-img');
+        const imgContainer = document.getElementById('img-container');
+        
+        const panzoomInstance = Panzoom(imgElem, {
+            maxScale: 4,     // Приближение до 4x
+            minScale: 1,     // Отдалить меньше исходного размера нельзя
+            step: 0.2,       // Шаг зума
+            contain: false   // Позволяем свободно таскать картинку
+        });
+
+        // Биндим зум на колесико мыши
+        imgContainer.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+
+        // Слушаем событие изменения масштаба
+        imgElem.addEventListener('panzoomzoom', (e) => {
+            const hint = document.getElementById('zoom-hint');
+            const resetBtn = document.getElementById('reset-zoom');
+            
+            // Если масштаб больше исходного
+            if (e.detail.scale > 1.05) {
+                hint.style.opacity = '0'; // Скрываем плашку подсказки
+                resetBtn.style.display = 'block'; // Показываем кнопку Reset
+            } else {
+                hint.style.opacity = '1';
+                resetBtn.style.display = 'none';
+            }
+        });
+
+        // Функция принудительного сброса зума (вызывается по кнопке или при закрытии окна)
+        window.resetImgZoom = function() {
+            panzoomInstance.reset();
+            document.getElementById('zoom-hint').style.opacity = '1';
+            document.getElementById('reset-zoom').style.display = 'none';
+        };
+
     </script>
 </body>
 </html>

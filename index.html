@@ -151,21 +151,17 @@
 
 
         /* ========================================= */
-        /* GLOWING EDGES CARD (OKHO PRICE)           */
+        /* TRANSPARENT GLOWING EDGES CARD            */
         /* ========================================= */
 
-        /* Обертка для позиционирования окна по центру */
         .price-win-wrapper {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 100; display: none; /* Скрыто по умолчанию */
+            z-index: 100; display: none; 
         }
 
         .glowing-card {
-            /* Базовые переменные эффекта */
-            --dark: #121212;
             --glow-sens: 30;
-            --card-bg: linear-gradient(8deg, var(--dark) 75%, color-mix(in hsl, var(--dark), white 2.5%) 75.5%);
-            --blend: soft-light;
+            --blend: screen; /* Меняем режим смешивания для стекла */
             --glow-blend: plus-lighter;
             --glow-color: 40deg 80% 80%;
             --glow-boost: 0%;
@@ -176,91 +172,38 @@
             
             position: relative;
             width: 90vw;
-            max-width: 800px; /* Ширина под твою картинку */
+            max-width: 800px;
             border-radius: 1.768em;
             isolation: isolate;
-            display: grid;
-            border: 1px solid rgb(255 255 255 / 25%);
-            background: var(--card-bg);
-            background-repeat: no-repeat;
+            
+            /* ПРОЗРАЧНОЕ МАТОВОЕ СТЕКЛО (Glassmorphism) */
+            background: rgba(15, 15, 25, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            
+            /* Мягкие тени для объема */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+        }
+        
+        /* Скрываем свечение, если мышка ушла или окно неактивно */
+        .glowing-card:not(:hover):not(.animating) .card-glow,
+        .glowing-card:not(:hover):not(.animating) .card-border-wrapper,
+        .glowing-card:not(:hover):not(.animating) .card-inner-mesh {
+            opacity: 0 !important;
+            transition: opacity 0.75s ease-in-out;
+        }
 
-            box-shadow: 
-                rgba(0, 0, 0, 0.5) 0px 1px 2px, 
-                rgba(0, 0, 0, 0.5) 0px 8px 16px, 
-                rgba(0, 0, 0, 0.8) 0px 32px 64px;
-        }
-        
-        /* Псевдоэлементы для градиентов и свечения */
-        .glowing-card::before,
-        .glowing-card::after,
-        .glowing-card > .card-glow {
-            content: ""; position: absolute; inset: 0;
-            border-radius: inherit; transition: opacity 0.25s ease-out; z-index: -1;
-        }
-        
-        .glowing-card:not(:hover):not(.animating)::before,
-        .glowing-card:not(:hover):not(.animating)::after,
-        .glowing-card:not(:hover):not(.animating) > .card-glow {
-            opacity: 0; transition: opacity 0.75s ease-in-out;
-        }
-        
-        /* Внутренний меш-градиент для рамки */
-        .glowing-card::before {
-            border: 1px solid transparent;
-            background:
-                linear-gradient(var(--card-bg) 0 100%) padding-box,
-                linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
-                radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 8% 6%, hsla(136,100%,78%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 41% 38%, hsla(192,100%,64%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 86% 85%, hsla(186,100%,74%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0px, transparent 50%) border-box,
-                radial-gradient(at 51% 4%, hsla(12,100%,72%,1) 0px, transparent 50%) border-box,
-                linear-gradient(#c299ff 0 100%) border-box;
-            
-            opacity: calc((var(--pointer-d) - var(--color-sens)) / (100 - var(--color-sens)));
-            mask-image: conic-gradient( from var(--pointer-°) at center, black 25%, transparent 40%, transparent 60%, black 75% );
-        }
-        
-        /* Внутренний фоновый градиент окна */
-        .glowing-card::after {
-            border: 1px solid transparent;
-            background:
-                radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 8% 6%, hsla(136,100%,78%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 41% 38%, hsla(192,100%,64%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 86% 85%, hsla(186,100%,74%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0px, transparent 50%) padding-box,
-                radial-gradient(at 51% 4%, hsla(12,100%,72%,1) 0px, transparent 50%) padding-box,
-                linear-gradient(#c299ff 0 100%) padding-box;
-            
-            mask-image:
-                linear-gradient( to bottom, black, black ),
-                radial-gradient( ellipse at 50% 50%, black 40%, transparent 65% ),
-                radial-gradient( ellipse at 66% 66%, black 5%, transparent 40% ),
-                radial-gradient( ellipse at 33% 33%, black 5%, transparent 40% ),
-                radial-gradient( ellipse at 66% 33%, black 5%, transparent 40% ),
-                radial-gradient( ellipse at 33% 66%, black 5%, transparent 40% ),
-                conic-gradient( from var(--pointer-°) at center, transparent 5%, black 15%, black 85%, transparent 95% );
-            mask-composite: subtract,add,add,add,add,add;
-            
-            opacity: calc((var(--pointer-d) - var(--color-sens)) / (100 - var(--color-sens)));
-            mix-blend-mode: var(--blend);
-        }
-        
-        /* Внешнее свечение */
-        .glowing-card > .card-glow {
+        /* 1. ВНЕШНЕЕ СВЕЧЕНИЕ (За пределами окна) */
+        .card-glow {
             --outset: var(--pads);
-            inset: calc(var(--outset) * -1);
-            pointer-events: none; z-index: 1;
-            
-            mask-image: conic-gradient( from var(--pointer-°) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5% );
+            position: absolute; inset: calc(var(--outset) * -1); border-radius: inherit; z-index: -1;
+            pointer-events: none; transition: opacity 0.25s ease-out;
+            mask-image: conic-gradient(from var(--pointer-°) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%);
             opacity: calc((var(--pointer-d) - var(--glow-sens)) / (100 - var(--glow-sens)));
             mix-blend-mode: var(--glow-blend);
         }
-        .glowing-card > .card-glow::before {
+        .card-glow::before {
             content: ""; position: absolute; inset: var(--outset); border-radius: inherit;
             box-shadow: 
                 inset 0 0 0 1px hsl( var(--glow-color) / 100%), 
@@ -270,7 +213,6 @@
                 inset 0 0 15px 0 hsl( var(--glow-color) / calc(var(--glow-boost) + 30%)), 
                 inset 0 0 25px 2px hsl( var(--glow-color) / calc(var(--glow-boost) + 20%)), 
                 inset 0 0 50px 2px hsl( var(--glow-color) / calc(var(--glow-boost) + 10%)), 
-                
                 0 0 1px 0 hsl( var(--glow-color) / calc(var(--glow-boost) + 60%)), 
                 0 0 3px 0 hsl( var(--glow-color) / calc(var(--glow-boost) + 50%)), 
                 0 0 6px 0 hsl( var(--glow-color) / calc(var(--glow-boost) + 40%)), 
@@ -279,16 +221,69 @@
                 0 0 50px 2px hsl( var(--glow-color) / calc(var(--glow-boost) + 10%));
         }
 
-        /* Контент внутри светящегося окна */
+        /* 2. РАМКА ОРГАНИЧИВАЮЩАЯ СВЕЧЕНИЕ (Коническая маска по курсору) */
+        .card-border-wrapper {
+            position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+            mask-image: conic-gradient(from var(--pointer-°) at center, black 25%, transparent 40%, transparent 60%, black 75%);
+            opacity: calc((var(--pointer-d) - var(--color-sens)) / (100 - var(--color-sens)));
+            transition: opacity 0.25s ease-out;
+        }
+
+        /* САМА ЦВЕТНАЯ РАМКА (Рисуется только по краям) */
+        .card-border-glow {
+            position: absolute; inset: 0; border-radius: inherit;
+            padding: 2px; /* Толщина рамки */
+            background:
+                radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0px, transparent 50%),
+                radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 8% 6%, hsla(136,100%,78%,1) 0px, transparent 50%),
+                radial-gradient(at 41% 38%, hsla(192,100%,64%,1) 0px, transparent 50%),
+                radial-gradient(at 86% 85%, hsla(186,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0px, transparent 50%),
+                radial-gradient(at 51% 4%, hsla(12,100%,72%,1) 0px, transparent 50%),
+                linear-gradient(#c299ff 0 100%);
+            /* Вырезаем центр, чтобы окно оставалось прозрачным */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        /* 3. ВНУТРЕННИЕ ПЯТНА СВЕЧЕНИЯ (Которые бегают под стеклом) */
+        .card-inner-mesh {
+            position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+            background:
+                radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0px, transparent 50%),
+                radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 8% 6%, hsla(136,100%,78%,1) 0px, transparent 50%),
+                radial-gradient(at 41% 38%, hsla(192,100%,64%,1) 0px, transparent 50%),
+                radial-gradient(at 86% 85%, hsla(186,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0px, transparent 50%),
+                radial-gradient(at 51% 4%, hsla(12,100%,72%,1) 0px, transparent 50%),
+                linear-gradient(#c299ff 0 100%);
+            mask-image:
+                linear-gradient( to bottom, black, black ),
+                radial-gradient( ellipse at 50% 50%, black 40%, transparent 65% ),
+                radial-gradient( ellipse at 66% 66%, black 5%, transparent 40% ),
+                radial-gradient( ellipse at 33% 33%, black 5%, transparent 40% ),
+                radial-gradient( ellipse at 66% 33%, black 5%, transparent 40% ),
+                radial-gradient( ellipse at 33% 66%, black 5%, transparent 40% ),
+                conic-gradient( from var(--pointer-°) at center, transparent 5%, black 15%, black 85%, transparent 95% );
+            mask-composite: subtract,add,add,add,add,add;
+            opacity: calc((var(--pointer-d) - var(--color-sens)) / (100 - var(--color-sens)));
+            mix-blend-mode: var(--blend);
+            transition: opacity 0.25s ease-out;
+        }
+
+        /* Контент внутри прозрачного окна */
         .glowing-card-inner {
             display: flex; flex-direction: column; z-index: 2; position: relative;
         }
 
         .glowing-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-family: monospace; font-weight: bold; font-size: 14px;
-            color: rgba(255, 255, 255, 0.7); cursor: move; /* для draggable */
+            color: rgba(255, 255, 255, 0.9); cursor: move; /* для draggable */
         }
         
         .glowing-header button {
@@ -300,19 +295,20 @@
         }
 
         .glowing-content {
-            padding: 20px; overflow: hidden; /* Картинка и так скроллится если что */
+            padding: 20px; overflow: hidden; 
         }
 
         .price-img-container { 
             width: 100%; max-height: 70vh; overflow-y: auto; 
             border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Добавил тень самой картинке */
         }
         
         /* Скроллбар для картинки внутри окна */
         .price-img-container::-webkit-scrollbar { width: 8px; }
-        .price-img-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
-        .price-img-container::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.5); border-radius: 4px; }
-        .price-img-container::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.8); }
+        .price-img-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+        .price-img-container::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.6); border-radius: 4px; }
+        .price-img-container::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.9); }
 
     </style>
 </head>
@@ -356,7 +352,7 @@
             <div class="liquidGlass-effect"></div>
             <div class="liquidGlass-tint"></div>
             <div class="liquidGlass-shine"></div>
-            <div class="liquidGlass-text">PRICE LIST</div>
+            <div class="liquidGlass-text">Price List</div>
         </button>
 
         <!-- Остальные ссылки -->
@@ -388,21 +384,30 @@
         </div>
     </div>
 
-    <!-- Окно прайса (Glowing Edges Card) -->
+    <!-- Окно прайса (ПРОЗРАЧНОЕ + СВЕТЯЩИЕСЯ КРАЯ) -->
     <div id="price-window-wrapper" class="price-win-wrapper">
         <div class="glowing-card" id="glowing-card">
             
+            <!-- Внешнее свечение вокруг рамки -->
             <span class="card-glow"></span>
             
+            <!-- Сама бегающая разноцветная рамка -->
+            <div class="card-border-wrapper">
+                <div class="card-border-glow"></div>
+            </div>
+            
+            <!-- Пятна, которые бегают ВНУТРИ прозрачного окна под картинкой -->
+            <div class="card-inner-mesh"></div>
+            
+            <!-- Контент (Текст и Картинка) -->
             <div class="glowing-card-inner">
                 <header class="glowing-header">
-                    <span>Price LIST</span>
+                    <span>Price List</span>
                     <button onclick="closePrice()">[ CLOSE X ]</button>
                 </header>
                 
                 <div class="glowing-content">
                     <div class="price-img-container">
-                        <!-- Твоя картинка прайса -->
                         <img src="input_file_0.png" alt="Price List" class="w-full h-auto block rounded-lg">
                     </div>
                 </div>
@@ -446,14 +451,14 @@
         }
 
         // ==========================================
-        // JS ДЛЯ GLOWING EDGES CARD (Из твоего CodePen)
+        // JS ДЛЯ GLOWING EDGES CARD
         // ==========================================
         const $card = document.getElementById("glowing-card");
 
         const cardUpdate = (e) => {
             const position = pointerPositionRelativeToElement($card, e);
             const[px, py] = position.pixels;
-            const [perx, pery] = position.percent;
+            const[perx, pery] = position.percent;
             const [dx, dy] = distanceFromCenter($card, px, py);
             const edge = closenessToEdge($card, px, py);
             const angle = angleFromPointerEvent($card, dx, dy);
@@ -476,13 +481,13 @@
         }
 
         const pointerPositionRelativeToElement = ($el, e) => {
-            const pos = [e.clientX, e.clientY];
+            const pos =[e.clientX, e.clientY];
             const { left, top, width, height } = $el.getBoundingClientRect();
             const x = pos[0] - left;
             const y = pos[1] - top;
             const px = clamp((100 / width) * x);
             const py = clamp((100 / height) * y);
-            return { pixels: [x, y], percent: [px, py] }
+            return { pixels: [x, y], percent:[px, py] }
         }
 
         const angleFromPointerEvent = ($el, dx, dy) => {
@@ -504,7 +509,7 @@
         }
 
         const closenessToEdge = ($card, x, y) => {
-            const [cx, cy] = centerOfElement($card);
+            const[cx, cy] = centerOfElement($card);
             const [dx, dy] = distanceFromCenter($card, x, y);
             let k_x = Infinity;
             let k_y = Infinity;

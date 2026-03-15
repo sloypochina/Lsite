@@ -58,34 +58,22 @@
             z-index: 10;
         }
 
-        /* Плавающий градиентный мазок за текстом */
         .artist-header-wrapper::before {
             content: "";
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 110%;
-            height: 160%;
+            top: 50%; left: 50%;
+            width: 110%; height: 160%;
             transform: translate(-50%, -50%);
-            /* Цвета кисти: синий, фиолетовый, розовый */
             background: linear-gradient(45deg, rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.4), rgba(244, 114, 182, 0.4));
             filter: blur(30px);
-            z-index: -1;
-            pointer-events: none;
-            /* Органичная форма кляксы/мазка */
+            z-index: -1; pointer-events: none;
             border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
             animation: paint-morph 8s ease-in-out infinite alternate;
         }
 
         @keyframes paint-morph {
-            0% { 
-                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; 
-                transform: translate(-50%, -50%) scale(0.95) rotate(0deg); 
-            }
-            100% { 
-                border-radius: 60% 40% 30% 70% / 60% 40% 50% 60%; 
-                transform: translate(-50%, -50%) scale(1.1) rotate(5deg); 
-            }
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: translate(-50%, -50%) scale(0.95) rotate(0deg); }
+            100% { border-radius: 60% 40% 30% 70% / 60% 40% 50% 60%; transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
         }
 
         /* ========================================= */
@@ -93,21 +81,11 @@
         /* ========================================= */
         
         .glass-btn {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-            overflow: hidden;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: transparent;
-            padding: 12px 24px;
-            box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-            outline: none;
+            position: relative; display: flex; justify-content: center; align-items: center;
+            font-weight: bold; text-decoration: none; cursor: pointer; overflow: hidden;
+            border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: transparent;
+            padding: 12px 24px; box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2); outline: none;
         }
 
         .glass-btn:hover {
@@ -116,33 +94,27 @@
             border-color: rgba(59, 130, 246, 0.5);
         }
 
+        /* Универсальные классы жидкого стекла (теперь и для окна) */
         .liquidGlass-effect {
-            position: absolute; z-index: 0; inset: 0;
-            backdrop-filter: blur(3px);
-            filter: url(#glass-distortion);
-            overflow: hidden; isolation: isolate; border-radius: inherit;
+            position: absolute; z-index: 0; inset: 0; backdrop-filter: blur(3px);
+            filter: url(#glass-distortion); overflow: hidden; isolation: isolate; border-radius: inherit;
         }
 
         .liquidGlass-tint {
-            position: absolute; inset: 0; z-index: 1;
-            background: rgba(255, 255, 255, 0.05);
+            position: absolute; inset: 0; z-index: 1; background: rgba(255, 255, 255, 0.05);
             border-radius: inherit; transition: background 0.3s ease;
         }
 
-        .glass-btn:hover .liquidGlass-tint {
-            background: rgba(255, 255, 255, 0.15);
-        }
+        .glass-btn:hover .liquidGlass-tint { background: rgba(255, 255, 255, 0.15); }
 
         .liquidGlass-shine {
             position: absolute; inset: 0; z-index: 2; overflow: hidden;
-            box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.3),
-                        inset -1px -1px 1px 1px rgba(255, 255, 255, 0.1);
-            border-radius: inherit;
+            box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.3), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.1);
+            border-radius: inherit; pointer-events: none;
         }
 
         .liquidGlass-text {
-            position: relative; z-index: 3;
-            letter-spacing: 2px; text-transform: uppercase; color: white; white-space: nowrap;
+            position: relative; z-index: 3; letter-spacing: 2px; text-transform: uppercase; color: white; white-space: nowrap;
         }
 
         /* ========================================= */
@@ -150,50 +122,69 @@
         /* ========================================= */
         
         .btn-price-main {
-            width: 100%;
-            max-width: 225px; 
-            margin-bottom: 15px;
-            /* Убрали жесткий border, теперь работает стандартный от стекла */
+            width: 100%; max-width: 225px; margin-bottom: 15px;
             animation: price-pulse-glow 3s infinite alternate;
         }
         
-        .btn-price-main .liquidGlass-text {
-            font-size: 1.1rem;
-        }
+        .btn-price-main .liquidGlass-text { font-size: 1.1rem; }
 
-        /* Мягкое зовущее свечение вокруг кнопки */
         @keyframes price-pulse-glow {
-            0% {
-                box-shadow: 0 0 15px rgba(59, 130, 246, 0.2), 
-                            inset 0 0 5px rgba(59, 130, 246, 0.1);
-            }
-            100% {
-                box-shadow: 0 0 35px rgba(59, 130, 246, 0.6), 
-                            inset 0 0 15px rgba(59, 130, 246, 0.3);
-            }
+            0% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2), inset 0 0 5px rgba(59, 130, 246, 0.1); }
+            100% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.6), inset 0 0 15px rgba(59, 130, 246, 0.3); }
         }
 
         .btn-price-main:hover {
-            animation: none; /* При наведении фиксируем сильное свечение */
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), inset 0 0 20px rgba(59, 130, 246, 0.5);
+            animation: none; box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), inset 0 0 20px rgba(59, 130, 246, 0.5);
         }
 
         /* ========================================= */
-
-        /* Окно Прайса */
+        /* === ОКНО ПРАЙСА (Liquid Glass Edition) == */
+        /* ========================================= */
+        
         .price-win {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #0a0a0a; border: 2px solid #3b82f6;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            z-index: 100; width: 90%; max-width: 550px; display: none;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 100; width: 95%; max-width: 800px; /* Сделал шире для твоей картинки */
+            display: none; border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 40px rgba(59, 130, 246, 0.2);
         }
+
+        /* Затемняем фон стекла специально для окна, чтобы текст и картинка читались лучше */
+        .price-win .liquidGlass-tint {
+            background: rgba(10, 10, 15, 0.5); 
+        }
+
+        /* Контент поверх стекла */
+        .price-win-content {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column;
+        }
+
         .win-header {
-            background: #3b82f6; color: white; padding: 10px 15px;
-            cursor: move; display: flex; justify-content: space-between;
-            font-size: 12px; font-weight: bold; font-family: monospace;
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px; cursor: move; display: flex; justify-content: space-between;
+            font-size: 13px; font-weight: bold; font-family: monospace; letter-spacing: 1px;
         }
-        .price-img-container { width: 100%; max-height: 80vh; overflow-y: auto; }
+
+        .win-close-btn {
+            color: #f87171; cursor: pointer; transition: all 0.3s ease; background: none; border: none; font-family: inherit;
+        }
+        
+        .win-close-btn:hover {
+            color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8); transform: scale(1.1);
+        }
+
+        .price-img-container { 
+            width: 100%; max-height: 75vh; overflow-y: auto; padding: 20px;
+        }
+
+        /* Кастомный стеклянный скроллбар для окна с картинкой */
+        .price-img-container::-webkit-scrollbar { width: 8px; }
+        .price-img-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; margin: 10px; }
+        .price-img-container::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
+        .price-img-container::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.8); }
 
         /* Заголовок с анимацией */
         .killer-header span {
@@ -260,26 +251,26 @@
             <div class="liquidGlass-effect"></div>
             <div class="liquidGlass-tint"></div>
             <div class="liquidGlass-shine"></div>
-            <div class="liquidGlass-text">PRICE LIST</div>
+            <div class="liquidGlass-text">PRICE_LIST.PNG</div>
         </button>
 
         <!-- Остальные ссылки -->
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="https://www.tiktok.com/@dansaneadorer?_r=1&_t=ZT-94iYEDE2BTh" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
+            <a href="https://tiktok.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
                 <div class="liquidGlass-effect"></div>
                 <div class="liquidGlass-tint"></div>
                 <div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">TIKTOK</div>
             </a>
             
-            <a href="https://www.instagram.com/dansaneadorer?igsh=cGF6MnpiYzBuZDU=" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
+            <a href="https://instagram.com/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
                 <div class="liquidGlass-effect"></div>
                 <div class="liquidGlass-tint"></div>
                 <div class="liquidGlass-shine"></div>
                 <div class="liquidGlass-text">INSTAGRAM</div>
             </a>
             
-            <a href="https://boosty.to/dansaneadorer" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
+            <a href="https://boosty.to/" target="_blank" onclick="createTrail(event)" class="glass-btn text-sm">
                 <div class="liquidGlass-effect"></div>
                 <div class="liquidGlass-tint"></div>
                 <div class="liquidGlass-shine"></div>
@@ -290,20 +281,32 @@
                 <div class="liquidGlass-effect"></div>
                 <div class="liquidGlass-tint"></div>
                 <div class="liquidGlass-shine"></div>
-                <div class="liquidGlass-text">TG ACC</div>
+                <div class="liquidGlass-text">TG_ACC.EXE</div>
             </a>
         </div>
 
     </div>
 
-    <!-- Окно прайса -->
+    <!-- Окно прайса (обновлено до Liquid Glass) -->
     <div id="price-window" class="price-win">
-        <div class="win-header">
-            <span>Price List</span>
-            <button onclick="closePrice()" style="cursor: pointer;">[ CLOSE X ]</button>
-        </div>
-        <div class="price-img-container">
-            <img src="img/price.jpg" alt="Price List" class="w-full h-auto block">
+        
+        <!-- Слои жидкого стекла для фона окна -->
+        <div class="liquidGlass-effect"></div>
+        <div class="liquidGlass-tint"></div>
+        <div class="liquidGlass-shine"></div>
+
+        <!-- Контент -->
+        <div class="price-win-content">
+            <div class="win-header">
+                <span>IMAGE_VIEWER.EXE - price_list.png</span>
+                <button onclick="closePrice()" class="win-close-btn">[ CLOSE X ]</button>
+            </div>
+            
+            <div class="price-img-container">
+                <!-- Я подставил имя картинки, которую ты скинул в чат (input_file_0.png) -->
+                <!-- Так что, если она лежит в одной папке с index.html, она сразу загрузится -->
+                <img src="input_file_0.png" alt="Price List" class="w-full h-auto block rounded-lg shadow-2xl">
+            </div>
         </div>
     </div>
 
@@ -311,6 +314,7 @@
         window.onload = () => { document.getElementById('bg-video').play(); };
 
         $( function() {
+            // Перемещение работает только за область header
             $( "#price-window" ).draggable({ handle: ".win-header" });
         });
 

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DANSANE</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Шрифты */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Playfair+Display:ital,wght@1,900&display=swap');
+
+        /* Основные стили страницы */
+        body { 
+            background: #050505; 
+            color: white; 
+            overflow: hidden; /* Запрещаем любую прокрутку (вниз и вбок) */
+            font-family: 'Space Grotesk', monospace; 
+            margin: 0; 
+            height: 100vh;
+        }
+
+        /* Видео-фон */
+        .video-bg {
+            position: fixed; inset: 0; z-index: -3;
+            width: 100vw; height: 100vh;
+            object-fit: cover;
+            filter: blur(15px) brightness(0.5); /* Оставили блюр, сделали чуть темнее для контраста */
+        }
+
+        /* Новая градиентная виньетка: Черный -> Синий -> Белый */
+        body::after {
+            content: ""; position: fixed; inset: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(15, 30, 80, 0.5) 50%, 
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            box-shadow: inset 0 0 150px 50px rgba(0, 0, 0, 0.5);
+            pointer-events: none; 
+            z-index: -1;
+        }
+
+        /* Базовый стиль кнопок */
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+        }
+        
+        /* Новая анимация кнопок при наведении (плавный подъем и свечение) */
+        .smooth-hover-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .smooth-hover-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Эффект змейки для заголовка (оставили как было) */
+        .killer-header span {
+            display: inline-block;
+            animation: snake-jump 4s infinite;
+            transition: 0.2s ease-out;
+            cursor: default;
+        }
+
+        /* Увеличение буквы при наведении (оставили как было) */
+        .killer-header span:hover {
+            animation: none !important;
+            transform: scale(1.6) translateY(-10px);
+            color: #3b82f6 !important; /* Синий цвет при наведении */
+            text-shadow: 0 0 15px #ffffff;
+        }
+        
+        @keyframes snake-jump {
+            0%, 100% { transform: translateY(0); }
+            5% { transform: translateY(-20px); }
+            10% { transform: translateY(0); }
+        }
+
+        /* След от клика (оставили) */
+        .trail-star { position: absolute; pointer-events: none; z-index: 9999; color: #ffffff; font-weight: bold; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline class="video-bg" id="bg-video">
+        <source src="img/bg.mp4" type="video/mp4">
+    </video>
+    
+    <div id="stars" class="fixed inset-0 z-[-1] opacity-70"></div>
+
+    <header class="absolute top-10 left-10 md:left-20">
+        <h1 class="killer-header text-5xl md:text-6xl uppercase tracking-tighter font-black whitespace-nowrap text-white">
+            <span style="animation-delay: 0.1s;">&lt;</span><span style="animation-delay: 0.2s;">D</span><span style="animation-delay: 0.3s;">A</span><span style="animation-delay: 0.4s;">N</span><span style="animation-delay: 0.5s;">S</span><span style="animation-delay: 0.6s;">A</span><span style="animation-delay: 0.7s;">N</span><span style="animation-delay: 0.8s;">E</span><span style="animation-delay: 0.9s;">&gt;</span>
+        </h1>
+        <p class="text-white/40 text-sm mt-2 tracking-widest font-mono">P.S. I'm from Russia .. 67</p>
+    </header>
+
+    <div class="absolute top-1/2 left-0 w-full transform -translate-y-1/2 flex flex-wrap justify-center items-center gap-6 px-4 z-10">
+        
+        <a href="https://www.tiktok.com/@dansaneadorer?_r=1&_t=ZT-94iYEDE2BTh" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-black/80">
+            TIKTOK
+        </a>
+        
+        <a href="https://www.instagram.com/dansaneadorer?igsh=cGF6MnpiYzBuZDU=" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-pink-600/50">
+            INSTAGRAM
+        </a>
+        
+        <a href="https://boosty.to/dansaneadorer" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-orange-500/50">
+            BOOSTY
+        </a>
+        
+        <a href="https://t.me/" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-blue-500/50">
+            TELEGRAM
+        </a>
+
+    </div>
+
+    <script>
+        // Запуск видео
+        window.onload = () => { document.getElementById('bg-video').play(); };
+        
+        // Создание следа при клике (оставил, раз тебе это нравится)
+        function createTrail(e) {
+            const el = document.createElement('div');
+            el.className = 'trail-star';
+            el.innerHTML = '✦';
+            el.style.left = e.pageX + 'px'; el.style.top = e.pageY + 'px';
+            document.body.appendChild(el);
+            $(el).animate({ opacity: 0, top: '-=50px', fontSize: '30px' }, 800, () => el.remove());
+        }
+
+        // Генерация звездочек на фоне
+        const stars = document.getElementById('stars');
+        for(let i=0; i<80; i++) { // Увеличил количество до 80 для красоты
+            const s = document.createElement('div');
+            
+            // Выбираем случайный цвет по твоим процентам
+            let colorClass = '';
+            let randomNum = Math.random(); // выдает число от 0 до 1
+            
+            if (randomNum < 0.4) {
+                colorClass = 'text-purple-500'; // 40% Фиолетовые
+            } else if (randomNum < 0.7) {
+                colorClass = 'text-pink-300';   // 30% Пастельно розовые
+            } else {
+                colorClass = 'text-black opacity-80'; // 30% Черные
+            }
+
+            s.className = `absolute font-bold ${colorClass}`;
+            s.style.left = Math.random()*100 + '%'; 
+            s.style.top = Math.random()*100 + '%';
+            
+            // Разный размер звездочек
+            let size = Math.random() * 10 + 10; // от 10px до 20px
+            s.style.fontSize = size + 'px';
+            
+            s.innerHTML = '✦'; 
+            stars.appendChild(s);
+        }
+    </script>
+</body>
+</html>

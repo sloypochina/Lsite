@@ -7,9 +7,9 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
     <style>
-        /* Шрифты */
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Playfair+Display:ital,wght@1,900&display=swap');
 
         body { 
@@ -21,7 +21,6 @@
             height: 100vh;
         }
 
-        /* Видео-фон с легким блюром */
         .video-bg {
             position: fixed; inset: 0; z-index: -3;
             width: 100vw; height: 100vh;
@@ -29,15 +28,9 @@
             filter: blur(5px) brightness(0.5); 
         }
 
-        /* Виньетка */
         body::after {
             content: ""; position: fixed; inset: 0;
-            background: linear-gradient(
-                135deg, 
-                rgba(0, 0, 0, 0.8) 0%, 
-                rgba(15, 30, 80, 0.5) 50%, 
-                rgba(255, 255, 255, 0.1) 100%
-            );
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 30, 80, 0.5) 50%, rgba(255, 255, 255, 0.1) 100%);
             box-shadow: inset 0 0 150px 50px rgba(0, 0, 0, 0.5);
             pointer-events: none; 
             z-index: -1;
@@ -54,6 +47,7 @@
             text-decoration: none;
             color: white;
             display: inline-block;
+            cursor: pointer;
         }
         
         .smooth-hover-btn {
@@ -65,27 +59,58 @@
             border-color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Змейка для заголовка */
+        /* Окно Прайса */
+        .price-win {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #3b82f6;
+            box-shadow: 10px 10px 0 rgba(59, 130, 246, 0.3);
+            z-index: 50;
+            width: 320px;
+            display: none; /* Изначально скрыто */
+        }
+        .win-header {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 12px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .price-content {
+            padding: 20px;
+            font-family: monospace;
+        }
+        .price-item {
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Заголовок */
         .killer-header span {
             display: inline-block;
             animation: snake-jump 4s infinite;
             transition: 0.3s ease-out;
-            cursor: default;
         }
-
-        /* Анимация и Цвет букв при наведении */
         .killer-header span:hover {
             animation: none !important;
             transform: scale(1.6) translateY(-10px);
-            text-shadow: 0 0 20px currentColor; /* Свечение в цвет буквы */
+            text-shadow: 0 0 20px currentColor;
         }
         
-        /* Цвета для букв (будут применяться через JS) */
-        .hover-color-1 { color: #3b82f6 !important; } /* Синий */
-        .hover-color-2 { color: #f472b6 !important; } /* Розовый */
-        .hover-color-3 { color: #a855f7 !important; } /* Фиолетовый */
-        .hover-color-4 { color: #ffffff !important; } /* Белый */
-        .hover-color-5 { color: #fbbf24 !important; } /* Желтый */
+        .hover-color-1 { color: #3b82f6 !important; }
+        .hover-color-2 { color: #f472b6 !important; }
+        .hover-color-3 { color: #a855f7 !important; }
+        .hover-color-4 { color: #ffffff !important; }
+        .hover-color-5 { color: #fbbf24 !important; }
 
         @keyframes snake-jump {
             0%, 100% { transform: translateY(0); }
@@ -110,21 +135,55 @@
     </header>
 
     <div class="absolute top-1/2 left-0 w-full transform -translate-y-1/2 flex flex-wrap justify-center items-center gap-6 px-4 z-10">
-        <a href="https://tiktok.com/" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-black/80">TIKTOK</a>
-        <a href="https://instagram.com/" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-pink-600/50">INSTAGRAM</a>
-        <a href="https://boosty.to/" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-orange-500/50">BOOSTY</a>
-        <a href="https://t.me/" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-blue-500/50">TELEGRAM</a>
+        <a href="https://www.tiktok.com/@dansaneadorer?_r=1&_t=ZT-94iYEDE2BTh" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-black/80">TIKTOK</a>
+        <a href="https://www.instagram.com/dansaneadorer?igsh=cGF6MnpiYzBuZDU=" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-pink-600/50">INSTAGRAM</a>
+        <a href="https://boosty.to/dansaneadorer" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-orange-500/50">BOOSTY</a>
+        <a href="https://t.me/ТВОЯ_ССЫЛКА" target="_blank" onclick="createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-blue-500/50">TG ACC</a>
+        <button onclick="openPrice(); createTrail(event)" class="glass-btn smooth-hover-btn hover:bg-green-600/50">PRICE</button>
+    </div>
+
+    <div id="price-window" class="price-win">
+        <div class="win-header">
+            <span>PRICE LIST</span>
+            <button onclick="closePrice()" style="cursor: pointer;">[X]</button>
+        </div>
+        <div class="price-content">
+            <div class="price-item">
+                <span>Simple Art</span>
+                <span class="text-green-400">20$</span>
+            </div>
+            <div class="price-item">
+                <span>Hard Art</span>
+                <span class="text-green-400">50$</span>
+            </div>
+            <div class="price-item">
+                <span>Character Design</span>
+                <span class="text-green-400">80$</span>
+            </div>
+            <p class="mt-4 text-[10px] text-gray-500 text-center">DM for more details</p>
+        </div>
     </div>
 
     <script>
         window.onload = () => { document.getElementById('bg-video').play(); };
+
+        // Делаем окно перетаскиваемым
+        $( function() {
+            $( "#price-window" ).draggable({ handle: ".win-header" });
+        });
+
+        function openPrice() {
+            $('#price-window').fadeIn(300);
+        }
+
+        function closePrice() {
+            $('#price-window').fadeOut(200);
+        }
         
-        // Скрипт для рандомных цветов букв при наведении
         $('.killer-header span').on('mouseenter', function() {
             const randomColorNum = Math.floor(Math.random() * 5) + 1;
             $(this).addClass('hover-color-' + randomColorNum);
         }).on('mouseleave', function() {
-            // Удаляем все цветовые классы, когда уводим мышку
             $(this).removeClass('hover-color-1 hover-color-2 hover-color-3 hover-color-4 hover-color-5');
         });
 
